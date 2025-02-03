@@ -1,33 +1,73 @@
-<!doctype html>
-<html class="no-js" lang="">
+<!DOCTYPE html>
+<html lang="zh">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>渐变颜色圆环进度条示例</title>
+  <style>
+    #progress-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
 
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-  <meta property="og:image:alt" content="">
+    svg {
+      transform: rotate(-90deg);
+    }
 
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.png">
-
-  <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+    #percentage {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
+<div id="progress-container">
+  <svg width="100" height="100">
+    <circle cx="50" cy="50" r="45" stroke="lightgray" stroke-width="10" fill="none" />
+    <circle id="progress-circle" cx="50" cy="50" r="45" stroke="red" stroke-width="10" fill="none"
+            stroke-dasharray="283" stroke-dashoffset="283" />
+  </svg>
+  <div id="percentage">0%</div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let currentPercentage = 0; // 当前进度
+    const targetPercentage = 80; // 目标进度
+    const interval = setInterval(() => {
+      if (currentPercentage < targetPercentage) {
+        currentPercentage++; // 每次增加1%
+        updateProgress(currentPercentage);
+      } else {
+        clearInterval(interval); // 达到目标后停止
+      }
+    }, 50); // 每50毫秒更新一次
+  });
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate.</p>
-  <script src="js/app.js"></script>
+  function updateProgress(percentage) {
+    const strokeDashoffset = 283 - (percentage / 100) * 283; // 283是圆环的周长
+    document.getElementById('progress-circle').style.strokeDashoffset = strokeDashoffset;
+    document.getElementById('percentage').innerText = percentage + '%';
 
+    // 根据当前进度设置渐变颜色
+    const red = percentage <= 50 ? 255 : Math.floor(255 - ((percentage - 50) * 255) / 35);
+    const green = percentage <= 50 ? Math.floor((percentage * 255) / 50) : (percentage <= 85 ? 255 : Math.floor((255 - ((percentage - 85) * 255) / 15)));
+    const blue = 0;
+
+    document.getElementById('progress-circle').style.stroke = `rgb(${red}, ${green}, ${blue})`;
+  }
+</script>
 </body>
 
 </html>
+
+
+
+
+
